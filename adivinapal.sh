@@ -1,24 +1,26 @@
 !/bin/bash
-#
-#
+
 EDITOR=nano
 PASSWD=/etc/passwd
 RED='\033[0;41;30m'
 STD='\033[0;0;39m'
  
 pause(){
-  read -p "Press [Enter] key to continue..." fackEnterKey
+  read -p "Presione enter para continuar" pausa
 }
 
 one(){
-	echo "one() called"
-        pause
+	
 }
  
 # do something in two()
 two(){
-	echo "two() called"
-        pause
+	echo "Por favor digite su usuario"
+	read usuario
+	echo "Por favor digite su contraseña"
+	read contra
+	PGPASSWORD=root psql -U postgres -h LocalHost -d ahorcado -c "INSERT into login values ('$usuario','$contra')" > prueba.txt
+	pause
 }
  
 # function to display menus
@@ -35,7 +37,7 @@ show_menus() {
 
 read_options(){
 	local choice
-	read -p "Enter choice [ 1 - 3] " choice
+	read -p "Digite la opción entre 1 y 4 " choice
 	case $choice in
 		1) one ;;
 		2) two ;;
@@ -48,7 +50,7 @@ read_options(){
 # ----------------------------------------------
 # Trap CTRL+C, CTRL+Z and quit singles
 # ----------------------------------------------
-trap '' SIGINT SIGQUIT SIGTSTP
+#trap '' SIGINT SIGQUIT SIGTSTP
  
 # -----------------------------------
 # Main logic - infinite loop
