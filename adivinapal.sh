@@ -1,5 +1,6 @@
 !/bin/bash
 #
+#
 EDITOR=nano
 PASSWD=/etc/passwd
 RED='\033[0;41;30m'
