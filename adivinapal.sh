@@ -10,12 +10,24 @@ pause(){
 }
 
 one(){
-	
+	echo "----Login----"
+	echo "Por favor ingrese su usario"
+	read usario
+	echo "Por favor digite su contraseña"
+	read contra
+	PGPASSWORD=root psql -U postgres -h LocalHost -d ahorcado -c "SELECT * FROM login WHERE usr ='$usuario' and pwd = '$contra'"
+	#if []
+	#then
+	#	echo "Usuario encontrado"
+	#else
+	#	echo "Datos de ingreso inválidos"
+	#fi
+	pause
 }
  
 # do something in two()
 two(){
-	echo "Por favor digite su usuario"
+	echo "Usted está en el formulario de registro, por favor digite el nombre de usuario"
 	read usuario
 	echo "Por favor digite su contraseña"
 	read contra
