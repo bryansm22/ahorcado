@@ -1,24 +1,43 @@
 !/bin/bash
-#
-#
+export PGPASSWORD=root
+
 EDITOR=nano
 PASSWD=/etc/passwd
 RED='\033[0;41;30m'
 STD='\033[0;0;39m'
- 
+
+#select palabra from palabra order by random() limit 1
+
 pause(){
-  read -p "Press [Enter] key to continue..." fackEnterKey
+  read -p "Presione enter para continuar" pausa
 }
 
 one(){
-	echo "one() called"
-        pause
+	echo "----Login----"
+	echo "Por favor ingrese su usario"
+	read usuario
+	echo "Por favor digite su contraseña"
+	read contra
+	resul=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT 1 FROM login WHERE usr ='$usuario' and pwd = '$contra'"`
+	echo $resul
+	if [ resul!=0 ]
+	then
+		echo "Usuario encontrado"
+	else
+		echo "Datos de usuario inválidos"
+	fi
+	pause
 }
  
 # do something in two()
 two(){
-	echo "two() called"
-        pause
+	echo "Usted está en el formulario de registro, por favor digite el nombre de usuario"
+	read usuario
+	echo "Por favor digite su contraseña"
+	read contra
+	#PGPASSWORD=root 
+	psql -U postgres -h LocalHost -d ahorcado -c "INSERT into login values ('$usuario','$contra')" > prueba.txt
+	pause
 }
  
 # function to display menus
@@ -35,7 +54,7 @@ show_menus() {
 
 read_options(){
 	local choice
-	read -p "Enter choice [ 1 - 3] " choice
+	read -p "Digite la opción entre 1 y 4 " choice
 	case $choice in
 		1) one ;;
 		2) two ;;
@@ -48,7 +67,7 @@ read_options(){
 # ----------------------------------------------
 # Trap CTRL+C, CTRL+Z and quit singles
 # ----------------------------------------------
-trap '' SIGINT SIGQUIT SIGTSTP
+#trap '' SIGINT SIGQUIT SIGTSTP
  
 # -----------------------------------
 # Main logic - infinite loop
