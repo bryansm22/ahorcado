@@ -123,7 +123,7 @@ leerOpcionLogged(){
 	case $choice in
 		1) unoL ;;
 		2) dosL ;;
-		3) jugar '$palabra' $puntaje ;;
+		3) jugar $palabra $puntaje ;;
 		4) exit 0 ;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac
@@ -191,7 +191,10 @@ while [ $puntos != 0 ]
 	if [ "$continuar" == "y" ] 
 	then
 	#Aqui mandas a llamar de nuevo la funcion......
-	jugar "nuevapalabradelabd" $puntos
+	palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
+	longitud=`expr length $palabra`
+	puntaje=$(echo $(($longitud*20)))
+	jugar $palabra $puntaje
 	fi
     fi
     return $puntos
