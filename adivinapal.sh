@@ -144,9 +144,9 @@ else
     palabra="palabra"
 fi
 preview_score=${2:-0}
-echo $palabra 
+#echo $palabra 
 palabra_size=${#palabra}
-echo $palabra_size
+#echo $palabra_size
 aux=$(printf -v f "%${palabra_size}s" ; printf "%s\n" "${f// /x}")
 
 puntos=$(echo $(($palabra_size*20)))
