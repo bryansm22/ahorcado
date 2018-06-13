@@ -99,7 +99,9 @@ while [ $puntos != 0 ]
                     coincidencias=$(($coincidencias+1))
                  fi
              done
-        if [$aux = $palabra]
+	echo ${#aux}
+	echo ${#palabra}
+        if [ "$aux" == "$palabra" ]
         then
             echo "has adivinado la palabra!!!"
             break
@@ -111,16 +113,22 @@ while [ $puntos != 0 ]
                  echo "-10pts"
                     puntos=$((puntos-10))
                  fi
-                 echo $aux
-                 echo "score:"$puntos
+              echo $aux
+              echo "score:"$puntos
     done
     if [ $puntos = 0 ]
     then
         echo "Has perdido el juego...."
+	else
+	read -p "Deseas continuar jugando? (y/n)" continuar
+	if [ "$continuar" == "y" ] 
+	then
+	#Aqui mandas a llamar de nuevo la funcion......
+	jugar "nuevapalabradelabd" $puntos
+	fi
     fi
     return $puntos
 }
-
 
 # ----------------------------------------------
 # Trap CTRL+C, CTRL+Z and quit singles
