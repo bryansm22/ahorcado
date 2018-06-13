@@ -115,11 +115,11 @@ leerOpcionLogged(){
 	local choice
 	read -p "Digite la opción" choice
 	palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
-	longitud=`expr length $palabra`
-	puntaje=$(echo $(($longitud*20)))
+	#longitud=`expr length $palabra`
+	puntaje=0
 	# $palabra
-	echo $longitud
-	echo $puntaje
+	#echo $longitud
+	#echo $puntaje
 	case $choice in
 		1) unoL ;;
 		2) dosL ;;
@@ -135,22 +135,24 @@ leerOpcionLogged(){
 #!/bin/bash
 # GNU bash, version 4.3.46
 
+
 jugar () {
-	echo $palabra
-	echo "HOLA"
 if [ ! -z $1 ] 
 then
     palabra=$1
 else
     palabra="palabra"
 fi
-preview_score=${2:-0}  
+preview_score=${2:-0}
+echo $palabra 
 palabra_size=${#palabra}
-aux=$(printf '%*s' $palabra_size '')
-aux="${aux// /*}"
-puntos=$(expr $palabra_size * 20)
-echo $puntos
+echo $palabra_size
+aux=$(printf -v f "%${palabra_size}s" ; printf "%s\n" "${f// /x}")
+
+puntos=$(echo $(($palabra_size*20)))
 puntos=$(expr $puntos + $preview_score)
+echo $puntos
+echo $aux
 while [ $puntos != 0 ]
     do
         read -p "Ingrese la letra:" letra
@@ -178,6 +180,8 @@ while [ $puntos != 0 ]
                  then
                  echo "La letra no es correcta"
                  echo "-10pts"
+		echo ""
+		echo ""
                     puntos=$((puntos-10))
                  fi
               echo $aux
@@ -191,10 +195,7 @@ while [ $puntos != 0 ]
 	if [ "$continuar" == "y" ] 
 	then
 	#Aqui mandas a llamar de nuevo la funcion......
-	palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
-	longitud=`expr length $palabra`
-	puntaje=$(echo $(($longitud*20)))
-	jugar $palabra $puntaje
+	jugar "nuevapalabradelabd" $puntos
 	fi
     fi
     return $puntos
