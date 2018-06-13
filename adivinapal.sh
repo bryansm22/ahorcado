@@ -1,7 +1,9 @@
 !/bin/bash
 export PGPASSWORD=root
 DECLARE usuario
-
+DECLARE palabra
+DELCARE longitud
+DELCARE puntaje
 #EDITOR=nano
 #PASSWD=/etc/passwd
 #RED='\033[0;41;30m'
@@ -25,6 +27,10 @@ uno(){
 	then
 		echo "Datos de usuario correctos"
 		mostrarMenuLogged
+		palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
+		longitud=`expr length $palabra`
+		puntaje=$(echo $(($longitud*20)))
+		echo $puntaje
 	else
 		echo "Datos de usuario inválidos"
 	fi
@@ -91,6 +97,7 @@ mostrarMenuLogged() {
 	echo "Seleccione su opción"
 	echo "1. Agregar Palabras"
 	echo "2. Eliminar Palabras"
+	echo "4. Jugar"
 	echo "3. Salir"
 	leerOpcionLogged
 	mostrarMenuLogged
@@ -114,7 +121,8 @@ leerOpcionLogged(){
 	case $choice in
 		1) unoL ;;
 		2) dosL ;;
-		3) exit 0 ;;
+		3) jugar $palabra $puntaje ;;
+		4) exit 0 ;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac
 }
@@ -185,14 +193,6 @@ while [ $puntos != 0 ]
     return $puntos
 }
 
-# ----------------------------------------------
-# Trap CTRL+C, CTRL+Z and quit singles
-# ----------------------------------------------
-#trap '' SIGINT SIGQUIT SIGTSTP
- 
-# -----------------------------------
-# Main logic - infinite loop
-# ------------------------------------
 while true
 do
  
