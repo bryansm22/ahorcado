@@ -118,10 +118,87 @@ leerOpcionLogged(){
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac
 }
+
+#Funcion que contiene la logica del juego ahorcado.
+#para llamarla se debera de incluir dos parametros la palabra y de existir un puntaje de la partida previa.
+#ejemplo: jugar "palabra" 100
+#!/bin/bash
+# GNU bash, version 4.3.46
+
+jugar () {
+if [ ! -z $1 ] 
+then
+    palabra=$1
+else
+    palabra="palabra"
+fi
+preview_score=${2:-0}  
+palabra_size=${#palabra}
+aux=$(printf '%*s' $palabra_size '')
+aux="${aux// /*}"
+puntos=$(expr $palabra_size * 20)
+echo $puntos
+puntos=$(expr $puntos + $preview_score)
+while [ $puntos != 0 ]
+    do
+        read -p "Ingrese la letra:" letra
+        echo $letra
+        coincidencias=0
+         for i in $(seq 0 $(($palabra_size-1)))
+             do
+               
+                 if [ ${palabra:$i:${i+1}} = $letra ] 
+                 then
+                    pre=${aux:0:${i}}
+                    aux=${aux:0:${i}}${letra}${aux:$(($i+1)):${palabra_size-1}}
+                    coincidencias=$(($coincidencias+1))
+                 fi
+             done
+	echo ${#aux}
+	echo ${#palabra}
+        if [ "$aux" == "$palabra" ]
+        then
+            echo "has adivinado la palabra!!!"
+            break
+        fi
+             #echo $coincidencias
+              if [ $coincidencias = 0 ] 
+                 then
+                 echo "La letra no es correcta"
+                 echo "-10pts"
+                    puntos=$((puntos-10))
+                 fi
+              echo $aux
+              echo "score:"$puntos
+    done
+    if [ $puntos = 0 ]
+    then
+        echo "Has perdido el juego...."
+	else
+	read -p "Deseas continuar jugando? (y/n)" continuar
+	if [ "$continuar" == "y" ] 
+	then
+	#Aqui mandas a llamar de nuevo la funcion......
+	jugar "nuevapalabradelabd" $puntos
+	fi
+    fi
+    return $puntos
+}
+
+# ----------------------------------------------
+# Trap CTRL+C, CTRL+Z and quit singles
+# ----------------------------------------------
+#trap '' SIGINT SIGQUIT SIGTSTP
  
+# -----------------------------------
+# Main logic - infinite loop
+# ------------------------------------
 while true
 do
  
 	mostrarMenu
 	leerOpcion
 done
+
+
+
