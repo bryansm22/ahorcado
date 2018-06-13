@@ -27,10 +27,6 @@ uno(){
 	then
 		echo "Datos de usuario correctos"
 		mostrarMenuLogged
-		palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
-		longitud=`expr length $palabra`
-		puntaje=$(echo $(($longitud*20)))
-		echo $puntaje
 	else
 		echo "Datos de usuario inválidos"
 	fi
@@ -118,10 +114,16 @@ leerOpcion(){
 leerOpcionLogged(){
 	local choice
 	read -p "Digite la opción" choice
+	palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
+	longitud=`expr length $palabra`
+	puntaje=$(echo $(($longitud*20)))
+	# $palabra
+	echo $longitud
+	echo $puntaje
 	case $choice in
 		1) unoL ;;
 		2) dosL ;;
-		3) jugar $palabra $puntaje ;;
+		3) jugar '$palabra' $puntaje ;;
 		4) exit 0 ;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac
@@ -134,6 +136,8 @@ leerOpcionLogged(){
 # GNU bash, version 4.3.46
 
 jugar () {
+	echo $palabra
+	echo "HOLA"
 if [ ! -z $1 ] 
 then
     palabra=$1
