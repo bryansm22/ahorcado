@@ -195,7 +195,8 @@ while [ $puntos != 0 ]
 	if [ "$continuar" == "y" ] 
 	then
 	#Aqui mandas a llamar de nuevo la funcion......
-	jugar "nuevapalabradelabd" $puntos
+	palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
+	jugar $palabra $puntos
 	fi
     fi
     return $puntos
