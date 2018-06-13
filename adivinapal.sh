@@ -97,8 +97,8 @@ mostrarMenuLogged() {
 	echo "Seleccione su opción"
 	echo "1. Agregar Palabras"
 	echo "2. Eliminar Palabras"
-	echo "4. Jugar"
-	echo "3. Salir"
+	echo "3. Jugar"
+	echo "4. Salir"
 	leerOpcionLogged
 	mostrarMenuLogged
 }
