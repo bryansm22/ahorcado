@@ -59,21 +59,13 @@ unoL(){
 	if [[ $palabraIngresada = 1 ]]
 	then
 		echo "La palabra ha sido ingresada correctamente"
-		menuAdministrar
 	else
 		echo "Error al ingresar la palabra"
-		menuAdministrar
 	fi
 }	
 
 
 dosL(){
-	echo "Este es el listado de palabras que puede eliminar:"
-	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra where usr = '$usuario'" > palabras.txt
-	resulset=`cat palabras.txt`
-	for iterador in ${resulset}; do
-		echo "-"${iterador}
-	done
 	echo "Ingrese la palabra que desea eliminar"
 	read palabra
 	delete=`psql -U postgres -h LocalHost -d ahorcado -t -c "delete from palabra where usr = '$usuario' and palabra = '$palabra' "` >prueba1.txt
@@ -81,10 +73,9 @@ dosL(){
 	if [[ $resultadoDelete = 1 ]]
 	then
 		echo "La palabra ha sido eliminada correctamente"
-		menuAdministrar
 	else
-		echo "La palabra ingresada no está en la lista"
-		menuAdministrar
+		echo "Usted no tiene permiso para eliminar esta palabra, 
+ya que ha sido ingresada por otro usuario O la palabra no existe"
 	fi
 }	
  
@@ -96,8 +87,8 @@ mostrarMenu() {
 	echo "1. Logearse"
 	echo "2. Registrarse"
 	echo "3. Salir"
+	echo "modi"
 	echo "4. Manual de usuario"
-	
 }
 
 mostrarMenuLogged() {
@@ -105,33 +96,12 @@ mostrarMenuLogged() {
 	echo "     Bienvenido  "
 	echo "-------------------"
 	echo "Seleccione su opción"
-	echo "1. Administrar Palabras"
-	echo "2. Jugar"
-	echo "3. Ver Puntaje"
-	echo "4. Salir"
-	leerOpcionLogged
-}
-
-menuAdministrar(){
-	echo "-------------------"	
-	echo "     Bienvenido  "
-	echo "-------------------"
-	echo "Seleccione su opción"
 	echo "1. Agregar Palabras"
 	echo "2. Eliminar Palabras"
-	echo "3. Salir"
-	leerAdministrar
-}
-
-menuPuntaje(){
-	echo "-------------------------------------"	
-	echo "     Bienvenido a los Puntajes "
-	echo "-------------------------------------"
-	echo "Seleccione su opción"
-	echo "1. Mis puntjaes de mayor a menor"
-	echo "2. Mis puntajes ordenados por fecha"
-	echo "3. Puntajes de todos los usuarios ordenados de mayor a menor"
-	leerPuntajes
+	echo "3. Jugar"
+	echo "4. Salir"
+	leerOpcionLogged
+	#mostrarMenuLogged
 }
 
 leerOpcion(){
@@ -146,28 +116,6 @@ leerOpcion(){
 	esac
 }
 
-leerAdministrar(){
-	local choice
-	read -p "Digite la opción" choice
-	case $choice in
-		1) unoL ;;
-		2) dosL ;;
-		3) exit 0 ;;
-		*) echo -e "${RED}Error...${STD}" && sleep 2
-	esac
-}
-
-leerPuntajes(){
-	local choice
-	read -p "Digite la opción" choice
-	case $choice in
-		1) unoL ;;
-		2) dosL ;;
-		3) exit 0 ;;
-		*) echo -e "${RED}Error...${STD}" && sleep 2
-	esac
-}
-
 leerOpcionLogged(){
 	local choice
 	read -p "Digite la opción" choice
@@ -178,9 +126,9 @@ leerOpcionLogged(){
 	#echo $longitud
 	#echo $puntaje
 	case $choice in
-		1) menuAdministrar ;;
-		2) jugar $palabra $puntaje ;;
-		3) menuPuntaje ;;
+		1) unoL ;;
+		2) dosL ;;
+		3) jugar $palabra $puntaje ;;
 		4) exit 0 ;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac
@@ -189,26 +137,25 @@ leerOpcionLogged(){
 #Funcion que contiene la logica del juego ahorcado.
 #para llamarla se debera de incluir dos parametros la palabra y de existir un puntaje de la partida previa.
 #ejemplo: jugar "palabra" 100
+#!/bin/bash
 # GNU bash, version 4.3.46
 
-
 jugar () {
+	echo $palabra
+	echo "HOLA"
 if [ ! -z $1 ] 
 then
     palabra=$1
 else
     palabra="palabra"
 fi
-preview_score=${2:-0}
-#echo $palabra 
+preview_score=${2:-0}  
 palabra_size=${#palabra}
-#echo $palabra_size
-aux=$(printf -v f "%${palabra_size}s" ; printf "%s\n" "${f// /x}")
-
-puntos=$(echo $(($palabra_size*20)))
-puntos=$(expr $puntos + $preview_score)
+aux=$(printf '%*s' $palabra_size '')
+aux="${aux// /*}"
+puntos=$(expr $palabra_size * 20)
 echo $puntos
-echo $aux
+puntos=$(expr $puntos + $preview_score)
 while [ $puntos != 0 ]
     do
         read -p "Ingrese la letra:" letra
@@ -228,7 +175,6 @@ while [ $puntos != 0 ]
 	echo ${#palabra}
         if [ "$aux" == "$palabra" ]
         then
-        	psql -U postgres -h LocalHost -d ahorcado -c "INSERT into puntaje (puntaje, usr, fecha) values ('$puntos','$usuario', '2018-06-20 18:00:00')"
             echo "has adivinado la palabra!!!"
             break
         fi
@@ -237,8 +183,6 @@ while [ $puntos != 0 ]
                  then
                  echo "La letra no es correcta"
                  echo "-10pts"
-		echo ""
-		echo ""
                     puntos=$((puntos-10))
                  fi
               echo $aux
@@ -253,7 +197,9 @@ while [ $puntos != 0 ]
 	then
 	#Aqui mandas a llamar de nuevo la funcion......
 	palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
-	jugar $palabra $puntos
+	longitud=`expr length $palabra`
+	puntaje=$(echo $(($longitud*20)))
+	jugar $palabra $puntaje
 	fi
     fi
     return $puntos
