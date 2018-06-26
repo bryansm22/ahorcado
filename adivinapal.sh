@@ -86,8 +86,35 @@ dosL(){
 		echo "La palabra ingresada no está en la lista"
 		menuAdministrar
 	fi
+}
+
+descendente(){
+	echo "Sus puntajes ordenados de mayor a menor de forma descendente son:"
+	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "	SELECT puntaje FROM puntaje WHERE usr = '$usuario' ORDER BY puntaje DESC" > puntajes.txt
+	resulset=`cat puntajes.txt`
+	for iterador in ${resulset}; do
+		echo "*"${iterador}
+	done
 }	
- 
+
+fecha(){
+	echo "Sus puntajes ordenados por fecha descendente son: "
+	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "	SELECT puntaje, fecha FROM puntaje WHERE usr = '$usuario' ORDER BY fecha DESC" > puntajes.txt
+	resulset=`cat puntajes.txt`
+	for iterador in ${resulset}; do
+		echo "*"${iterador}
+	done
+}
+
+todosPuntajes(){
+	echo "Los puntajes de todos los usuarios ordenados descendentemente son:"
+	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "	SELECT puntaje, usr FROM puntaje ORDER BY puntaje DESC" > puntajes.txt
+	resulset=`cat puntajes.txt`
+	for iterador in ${resulset}; do
+		echo "*"${iterador}
+	done
+}
+
 mostrarMenu() {
 	clear
 	echo "-------------------"	
@@ -167,9 +194,9 @@ leerPuntajes(){
 	local choice
 	read -p "Digite la opción" choice
 	case $choice in
-		1) unoL ;;
-		2) dosL ;;
-		3) exit 0 ;;
+		1) descendente ;;
+		2) fecha ;;
+		3) todosPuntajes ;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac
 }
@@ -215,6 +242,7 @@ puntos=$(echo $(($palabra_size*20)))
 puntos=$(expr $puntos + $preview_score)
 echo $puntos
 echo $aux
+echo $preview_score
     palabra=$1
 while [ $puntos != 0 ]
     do
