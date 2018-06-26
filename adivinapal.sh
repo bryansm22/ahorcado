@@ -147,8 +147,14 @@ leerOpcion(){
 }
 
 leerAdministrar(){
-	local choice
+	llocal choice
 	read -p "Digite la opción" choice
+	palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
+	longitud=`expr length $palabra`
+	puntaje=$(echo $(($longitud*20)))
+	# $palabra
+	#echo $longitud
+	#echo $puntaje
 	case $choice in
 		1) unoL ;;
 		2) dosL ;;
@@ -193,6 +199,8 @@ leerOpcionLogged(){
 
 
 jugar () {
+	echo $palabra
+	echo "HOLA"
 if [ ! -z $1 ] 
 then
     palabra=$1
@@ -200,15 +208,14 @@ else
     palabra="palabra"
 fi
 preview_score=${2:-0}
-#echo $palabra 
+    palabra=$1
 palabra_size=${#palabra}
-#echo $palabra_size
 aux=$(printf -v f "%${palabra_size}s" ; printf "%s\n" "${f// /x}")
-
 puntos=$(echo $(($palabra_size*20)))
 puntos=$(expr $puntos + $preview_score)
 echo $puntos
 echo $aux
+    palabra=$1
 while [ $puntos != 0 ]
     do
         read -p "Ingrese la letra:" letra
@@ -253,6 +260,10 @@ while [ $puntos != 0 ]
 	then
 	#Aqui mandas a llamar de nuevo la funcion......
 	palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
+	#AQUI AGREGARE EL PUNTAJE DE LA NUEVA PALABRA PARA QUE SE SUME CON EL QUE VAMOS ARRASTRANDO.
+	longitud=`expr length $palabra`
+	puntaje=$(echo $(($longitud*20)))
+	puntos=$((puntos+puntaje))
 	jugar $palabra $puntos
 	fi
     fi
