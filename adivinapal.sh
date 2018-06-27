@@ -205,14 +205,14 @@ leerOpcionLogged(){
 	local choice
 	read -p "Digite la opción" choice
 	palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
-	longitud=`expr length $palabra`
-	puntaje=$(echo $(($longitud*20)))
+	#longitud=`expr length $palabra`
+	#puntaje=$(echo $(($longitud*20)))
 	# $palabra
 	#echo $longitud
 	#echo $puntaje
 	case $choice in
 		1) menuAdministrar ;;
-		2) jugar $palabra $puntaje ;;
+		2) jugar $palabra 0 ;;
 		3) menuPuntaje ;;
 		4) exit 0 ;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
@@ -289,9 +289,9 @@ while [ $puntos != 0 ]
 	#Aqui mandas a llamar de nuevo la funcion......
 	palabra=`psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra order by random() limit 1"`
 	#AQUI AGREGARE EL PUNTAJE DE LA NUEVA PALABRA PARA QUE SE SUME CON EL QUE VAMOS ARRASTRANDO.
-	longitud=`expr length $palabra`
-	puntaje=$(echo $(($longitud*20)))
-	puntos=$((puntos+puntaje))
+	#longitud=`expr length $palabra`
+	#puntaje=$(echo $(($longitud*20)))
+	#puntos=$((puntos+puntaje))
 	jugar $palabra $puntos
 	fi
     fi
