@@ -247,6 +247,10 @@ echo $preview_score
 while [ $puntos != 0 ]
     do
         read -p "Ingrese la letra:" letra
+	if [[ $letra != [A-Z] ]] && [[ $letra != [a-z] ]] ; then
+    		echo "Lo que usted ha ingresado no es una letra"
+		continue
+	fi
         echo $letra
         coincidencias=0
          for i in $(seq 0 $(($palabra_size-1)))
