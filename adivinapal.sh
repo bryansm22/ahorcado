@@ -36,7 +36,7 @@ dos(){
 	echo "Por favor digite su contraseña"
 	read contra
 	#PGPASSWORD=root 
-	psql -U postgres -h LocalHost -d ahorcado -c "INSERT into login values ('$usuario','$contra')" > prueba.txt
+	psql -U postgres -h LocalHost -d ahorcado -c "INSERT into login values ('$usuario','$contra')" >bd.txt
 	pause
 }
 
@@ -65,14 +65,14 @@ unoL(){
 
 dosL(){
 	echo "Este es el listado de palabras que puede eliminar:"
-	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra where usr = '$usuario'" > palabras.txt
-	resulset=`cat palabras.txt`
+	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT palabra from palabra where usr = '$usuario'" > bd.txt
+	resulset=`cat bd.txt`
 	for iterador in ${resulset}; do
 		echo "-"${iterador}
 	done
 	echo "Ingrese la palabra que desea eliminar"
 	read palabra
-	delete=`psql -U postgres -h LocalHost -d ahorcado -t -c "delete from palabra where usr = '$usuario' and palabra = '$palabra' "` >prueba1.txt
+	delete=`psql -U postgres -h LocalHost -d ahorcado -t -c "delete from palabra where usr = '$usuario' and palabra = '$palabra' "` >bd.txt
 	resultadoDelete=${delete: -1:8}
 	if [[ $resultadoDelete = 1 ]]
 	then
@@ -86,8 +86,8 @@ dosL(){
 
 descendente(){
 	echo "Sus puntajes ordenados de mayor a menor de forma descendente son:"
-	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "	SELECT puntaje FROM puntaje WHERE usr = '$usuario' ORDER BY puntaje DESC" > puntajes.txt
-	resulset=`cat puntajes.txt`
+	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "	SELECT puntaje FROM puntaje WHERE usr = '$usuario' ORDER BY puntaje DESC" > bd.txt
+	resulset=`cat bd.txt`
 	for iterador in ${resulset}; do
 		echo "*"${iterador}
 	done
@@ -97,8 +97,8 @@ descendente(){
 
 fecha(){
 	echo "Sus puntajes ordenados por fecha descendente son: "
-	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "	SELECT puntaje, fecha FROM puntaje WHERE usr = '$usuario' ORDER BY fecha DESC" > puntajes.txt
-	resulset=`cat puntajes.txt`
+	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "	SELECT puntaje, fecha FROM puntaje WHERE usr = '$usuario' ORDER BY fecha DESC" > bd.txt
+	resulset=`cat bd.txt`
 	for iterador in ${resulset}; do
 		echo "*"${iterador}
 	done
@@ -108,8 +108,8 @@ fecha(){
 
 todosPuntajes(){
 	echo "Los puntajes de todos los usuarios ordenados descendentemente son:"
-	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT usr, puntaje FROM puntaje ORDER BY puntaje DESC" > puntajes.txt
-	resulset=`cat puntajes.txt`
+	psql -X -A -U postgres -h LocalHost -d ahorcado -t -c "SELECT usr, puntaje FROM puntaje ORDER BY puntaje DESC" > bd.txt
+	resulset=`cat bd.txt`
 	for iterador in ${resulset}; do
 		echo "*"${iterador}
 	done
